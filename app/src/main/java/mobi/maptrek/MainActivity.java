@@ -172,6 +172,7 @@ import mobi.maptrek.fragments.AmenityInformation;
 import mobi.maptrek.fragments.AmenitySetupDialog;
 import mobi.maptrek.fragments.BaseMapDownload;
 import mobi.maptrek.fragments.CrashReport;
+import mobi.maptrek.fragments.CreateRoute;
 import mobi.maptrek.fragments.DataExport;
 import mobi.maptrek.fragments.DataList;
 import mobi.maptrek.fragments.DataSourceList;
@@ -1798,6 +1799,9 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
         FragmentFactory factory = mFragmentManager.getFragmentFactory();
         ItineraryFragment fragment = (ItineraryFragment) factory.instantiate(getClassLoader(), ItineraryFragment.class.getName());
         showExtendPanel(PANEL_STATE.ITINERARY, "itinerary", fragment);
+        /*FragmentFactory factory = mFragmentManager.getFragmentFactory();
+            CreateRoute fragment = (CreateRoute) factory.instantiate(getClassLoader(), CreateRoute.class.getName());
+            showExtendPanel(PANEL_STATE.ITINERARY, "createItinerary", fragment);*/
     }
 
     private void onMapsClicked() {
@@ -3597,8 +3601,6 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
         if (mViews.listActionButton.getVisibility() == View.INVISIBLE)
             mViews.listActionButton.setVisibility(View.VISIBLE);
     }
-
-
 
     @Override
     public FloatingActionButton enableListActionButton() {
