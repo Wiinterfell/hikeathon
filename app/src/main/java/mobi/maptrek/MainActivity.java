@@ -171,6 +171,7 @@ import mobi.maptrek.fragments.AmenityInformation;
 import mobi.maptrek.fragments.AmenitySetupDialog;
 import mobi.maptrek.fragments.BaseMapDownload;
 import mobi.maptrek.fragments.CrashReport;
+import mobi.maptrek.fragments.CreateRoute;
 import mobi.maptrek.fragments.DataExport;
 import mobi.maptrek.fragments.DataList;
 import mobi.maptrek.fragments.DataSourceList;
@@ -1786,8 +1787,9 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
     }
 
     private void onItineraryClicked() {
-        // todo
-        logger.debug("pouet");
+        FragmentFactory factory = mFragmentManager.getFragmentFactory();
+            CreateRoute fragment = (CreateRoute) factory.instantiate(getClassLoader(), CreateRoute.class.getName());
+            showExtendPanel(PANEL_STATE.ITINERARY, "createItinerary", fragment);
     }
 
     private void onMapsClicked() {
