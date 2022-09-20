@@ -18,24 +18,31 @@ package mobi.maptrek.fragments;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import mobi.maptrek.MapTrek;
 import mobi.maptrek.R;
+import mobi.maptrek.maps.MapIndex;
+import mobi.maptrek.maps.routing.Router;
 
 public class CreateRoute extends Fragment {
+    private Router mRouter;
+    private MapIndex mMapIndex;
+
     public CreateRoute() {
         super(R.layout.fragment_create_route);
+        this.mMapIndex = MapTrek.getApplication().getExtraMapIndex();
+        this.mRouter = new Router();
     }
 
     @MainThread
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         view.findViewById(R.id.compute_route).setOnClickListener(v -> {
-            Toast.makeText(getActivity().getApplicationContext(), "Ça clique !", Toast.LENGTH_LONG).show();
+            mRouter.compute(mMapIndex);
         });
     }
 }
