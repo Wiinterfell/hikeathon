@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "mobi.maptrek"
-        minSdkVersion 23
+        minSdk 26
         targetSdkVersion 31
         versionCode 84
         versionName "2022.05"

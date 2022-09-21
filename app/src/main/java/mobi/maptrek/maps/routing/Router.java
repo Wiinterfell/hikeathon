@@ -10,7 +10,6 @@ import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.ResponsePath;
-import com.graphhopper.config.CHProfile;
 import com.graphhopper.config.LMProfile;
 import com.graphhopper.config.Profile;
 import com.graphhopper.routing.weighting.custom.CustomProfile;
@@ -29,15 +28,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Locale;
 
-import mobi.maptrek.maps.MapIndex;
+import mobi.maptrek.MapTrek;
 
 public class Router {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
 
-    public void compute(MapIndex mapIndex) {
+    public void compute(String osmFilePath) {
         Log.d("Router", "Ça clique!");
-        Log.d("Router", String.valueOf(mapIndex.getMaps().size()));
-//        GraphHopper hopper = createGraphHopperInstance(relDir + "core/files/andorra.osm.pbf");
+        GraphHopper hopper = createGraphHopperInstance(osmFilePath);
 //        routing(hopper);
 //        speedModeVersusFlexibleMode(hopper);
 //        headingAndAlternativeRoute(hopper);
@@ -51,13 +49,14 @@ public class Router {
         GraphHopper hopper = new GraphHopper();
         hopper.setOSMFile(ghLoc);
         // specify where to store graphhopper files
-        hopper.setGraphHopperLocation("target/routing-graph-cache");
+        String graphHopperPathDataPath = MapTrek.getApplication().getExternalDir("graphhopper").getPath();
+        hopper.setGraphHopperLocation(graphHopperPathDataPath);
 
         // see docs/core/profiles.md to learn more about profiles
-        hopper.setProfiles(new Profile("car").setVehicle("car").setWeighting("fastest").setTurnCosts(false));
+        hopper.setProfiles(new Profile("hike"));
 
         // this enables speed mode for the profile we called car
-        hopper.getCHPreparationHandler().setCHProfiles(new CHProfile("car"));
+//        hopper.getCHPreparationHandler().setCHProfiles(new CHProfile("car"));
 
         // now this can take minutes if it imports or a few seconds for loading of course this is dependent on the area you import
         hopper.importOrLoad();
