@@ -51,38 +51,42 @@ public class VisoRandoApiCaller extends AsyncTask<String, Void, String> {
 
                 Gson g = new Gson();
                 VisoRandoJson visoRandoJson = g.fromJson(searchResult, VisoRandoJson.class);
-                int id = visoRandoJson.geojson.features.get(0).properties.id;
+                if (visoRandoJson.geojson.features.size() > 0) {
+                    int id = visoRandoJson.geojson.features.get(0).properties.id;
 
-                String visoRandoUrl = String.format("https://www.visorando.com/en/index.php?component=user&task=redirectToContent&from=gpxRando&idRandonnee=%d", id);
+                    String visoRandoUrl = String.format("https://www.visorando.com/en/index.php?component=user&task=redirectToContent&from=gpxRando&idRandonnee=%d", id);
 
-                Request request = new Request.Builder()
-                        .url(visoRandoUrl)
-                        .get()
-                        .build();
-                Response response = client.newCall(request).execute();
-                String php = response.body().string();
-                int indexClickHere = php.indexOf("click here");
-                String line = php.substring(indexClickHere - 150, indexClickHere);
-                int indexHref = line.indexOf("href");
-                String gpxUrl = line.substring(indexHref + 6, line.length() - 2);
+                    Request request = new Request.Builder()
+                            .url(visoRandoUrl)
+                            .get()
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String php = response.body().string();
+                    int indexClickHere = php.indexOf("click here");
+                    String line = php.substring(indexClickHere - 150, indexClickHere);
+                    int indexHref = line.indexOf("href");
+                    String gpxUrl = line.substring(indexHref + 6, line.length() - 2);
 
-                Request requestGpx = new Request.Builder()
-                        .url(gpxUrl)
-                        .get()
-                        .build();
-                Response responseGpx = client.newCall(requestGpx).execute();
-                String gpx = responseGpx.body().string();
-                return gpx;
+                    Request requestGpx = new Request.Builder()
+                            .url(gpxUrl)
+                            .get()
+                            .build();
+                    Response responseGpx = client.newCall(requestGpx).execute();
+                    String gpx = responseGpx.body().string();
+                    return gpx;
+                } else {
+                    Log.d("VISORANDO: nothing found", String.valueOf(visoRandoJson.geojson.features.size()));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } catch (Exception e) {
             this.exception = e;
 
-            return null;
+            return "";
         } finally {
         }
-        return null;
+        return "";
     }
 
     protected void onPostExecute(String response) {
