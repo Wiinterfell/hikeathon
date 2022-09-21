@@ -4,8 +4,6 @@ import static com.graphhopper.json.Statement.If;
 import static com.graphhopper.json.Statement.Op.LIMIT;
 import static com.graphhopper.json.Statement.Op.MULTIPLY;
 
-import android.util.Log;
-
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -15,15 +13,8 @@ import com.graphhopper.config.Profile;
 import com.graphhopper.routing.weighting.custom.CustomProfile;
 import com.graphhopper.util.CustomModel;
 import com.graphhopper.util.Helper;
-import com.graphhopper.util.Instruction;
-import com.graphhopper.util.InstructionList;
 import com.graphhopper.util.Parameters;
-import com.graphhopper.util.PointList;
-import com.graphhopper.util.Translation;
 import com.graphhopper.util.shapes.GHPoint;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -31,18 +22,16 @@ import java.util.Locale;
 import mobi.maptrek.MapTrek;
 
 public class Router {
-    private static final Logger logger = LoggerFactory.getLogger(Router.class);
-
-    public void compute(String osmFilePath) {
-        Log.d("Router", "Ça clique!");
+    public ResponsePath compute(String osmFilePath, double fromLat, double fromLon, double toLat, double toLon) {
         GraphHopper hopper = createGraphHopperInstance(osmFilePath);
-//        routing(hopper);
+        ResponsePath result = routing(hopper, fromLat, fromLon, toLat, toLon);
 //        speedModeVersusFlexibleMode(hopper);
 //        headingAndAlternativeRoute(hopper);
 //        customizableRouting(relDir + "core/files/andorra.osm.pbf");
 //
 //        // release resources to properly shutdown or start a new instance
-//        hopper.close();
+        hopper.close();
+        return result;
     }
 
     static GraphHopper createGraphHopperInstance(String ghLoc) {
@@ -63,11 +52,11 @@ public class Router {
         return hopper;
     }
 
-    public static void routing(GraphHopper hopper) {
+    public static ResponsePath routing(GraphHopper hopper, double fromLat, double fromLon, double toLat, double toLon) {
         // simple configuration of the request object
-        GHRequest req = new GHRequest(42.508552, 1.532936, 42.507508, 1.528773).
+        GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
                 // note that we have to specify which profile we are using even when there is only one like here
-                        setProfile("car").
+                        setProfile("hike").
                 // define the language for the turn instructions
                         setLocale(Locale.US);
         GHResponse rsp = hopper.route(req);
@@ -77,21 +66,7 @@ public class Router {
             throw new RuntimeException(rsp.getErrors().toString());
 
         // use the best path, see the GHResponse class for more possibilities.
-        ResponsePath path = rsp.getBest();
-
-        // points, distance in meters and time in millis of the full path
-        PointList pointList = path.getPoints();
-        double distance = path.getDistance();
-        long timeInMs = path.getTime();
-
-        Translation tr = hopper.getTranslationMap().getWithFallBack(Locale.UK);
-        InstructionList il = path.getInstructions();
-        // iterate over all turn instructions
-        for (Instruction instruction : il) {
-            // System.out.println("distance " + instruction.getDistance() + " for instruction: " + instruction.getTurnDescription(tr));
-        }
-        assert il.size() == 6;
-        assert Helper.round(path.getDistance(), -2) == 900;
+        return rsp.getBest();
     }
 
     public static void speedModeVersusFlexibleMode(GraphHopper hopper) {
