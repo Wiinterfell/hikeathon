@@ -1812,8 +1812,12 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
             mViews.addItineraryButton.setVisibility(View.VISIBLE);
         }
 
+        Bundle args = new Bundle(5);
+        args.putDouble(MapList.ARG_LATITUDE, mMapPosition.getLatitude());
+        args.putDouble(MapList.ARG_LONGITUDE, mMapPosition.getLongitude());
         FragmentFactory factory = mFragmentManager.getFragmentFactory();
         ItineraryFragment fragment = (ItineraryFragment) factory.instantiate(getClassLoader(), ItineraryFragment.class.getName());
+        fragment.setArguments(args);
         showExtendPanel(PANEL_STATE.ITINERARY, "itinerary", fragment);
     }
 
@@ -1958,7 +1962,6 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
     }
 
     public void onMapFilterClicked() {
-        Toast.makeText(getApplicationContext(), "yolo", Toast.LENGTH_LONG).show();
         final AlertDialog mapFilterDialog = new AlertDialog.Builder(this)
         .setTitle(R.string.actionMapFilter)
                 .setMultiChoiceItems(mTypes, typeFilterChecked, new DialogInterface.OnMultiChoiceClickListener() {
@@ -1968,8 +1971,10 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
                 typeFilterChecked[which] = isChecked;
                 if(isChecked) {
                     Tags.setHighlightedType(Tags.selectedTypes[which]);
+                    mMap.clearMap();
                 } else {
                     Tags.removeHighlightedType(Tags.selectedTypes[which]);
+                    mMap.clearMap();
                 }
             }
         })

@@ -1039,7 +1039,7 @@ public class Tags {
 
     public static void removeHighlightedType(int type) {
         if (type >= 0 && type < typeNames.length) {
-            highlightedTypes.remove(Arrays.asList(type));
+            highlightedTypes.remove(Integer.valueOf(type));
         }
     }
 
