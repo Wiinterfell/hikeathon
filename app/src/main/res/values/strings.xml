@@ -766,5 +766,6 @@
     <string name="create_route">Go</string>
     <string name="actionManageBackground">Manage Background</string>
     <string name="actionBackgroundSettings">Background settings</string>
+    <string name="defaultCustomRouteName">My route</string>
 
 </resources>
