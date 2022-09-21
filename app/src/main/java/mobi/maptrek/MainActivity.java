@@ -55,27 +55,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
-import androidx.appcompat.widget.ContentFrameLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.graphics.Insets;
-import androidx.core.splashscreen.SplashScreen;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentFactory;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.transition.Fade;
@@ -102,11 +81,31 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.ContentFrameLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.graphics.Insets;
+import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentFactory;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.oscim.android.canvas.AndroidBitmap;
@@ -179,8 +178,8 @@ import mobi.maptrek.fragments.DataExport;
 import mobi.maptrek.fragments.DataList;
 import mobi.maptrek.fragments.DataSourceList;
 import mobi.maptrek.fragments.FragmentHolder;
-import mobi.maptrek.fragments.ItineraryFragment;
 import mobi.maptrek.fragments.ItemWithIcon;
+import mobi.maptrek.fragments.ItineraryFragment;
 import mobi.maptrek.fragments.Legend;
 import mobi.maptrek.fragments.LocationInformation;
 import mobi.maptrek.fragments.LocationShareDialog;
@@ -229,7 +228,6 @@ import mobi.maptrek.location.ILocationService;
 import mobi.maptrek.location.INavigationService;
 import mobi.maptrek.location.LocationService;
 import mobi.maptrek.location.NavigationService;
-import mobi.maptrek.util.SafeResultReceiver;
 import mobi.maptrek.maps.MapFile;
 import mobi.maptrek.maps.MapIndex;
 import mobi.maptrek.maps.MapService;
@@ -246,6 +244,7 @@ import mobi.maptrek.util.MathUtils;
 import mobi.maptrek.util.Osm;
 import mobi.maptrek.util.OsmcSymbolFactory;
 import mobi.maptrek.util.ProgressHandler;
+import mobi.maptrek.util.SafeResultReceiver;
 import mobi.maptrek.util.ShieldFactory;
 import mobi.maptrek.util.StringFormatter;
 import mobi.maptrek.util.SunriseSunset;
@@ -401,6 +400,7 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
     private boolean mObjectInteractionEnabled = true;
     private ShieldFactory mShieldFactory;
     private OsmcSymbolFactory mOsmcSymbolFactory;
+    private FileDataSource mCustomRouteDataSource;
 
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
@@ -4156,6 +4156,15 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
             mMap.layers().add(routeLayer, MAP_DATA);
             mTotalDataItems++;
         }
+    }
+
+    public void showRoute(FileDataSource source) {
+        if (mCustomRouteDataSource != null) {
+            setDataSourceAvailability(mCustomRouteDataSource, false);
+        }
+
+        this.addSourceToMap(source);
+        mCustomRouteDataSource = source;
     }
 
     private void removeSourceFromMap(FileDataSource source) {
