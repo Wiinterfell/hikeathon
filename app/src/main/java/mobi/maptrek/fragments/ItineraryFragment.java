@@ -41,6 +41,6 @@ public class ItineraryFragment extends Fragment {
         double latitude = arguments.getDouble(ARG_LATITUDE);
         double longitude = arguments.getDouble(ARG_LONGITUDE);
 
-        new VisoRandoApiCaller(latitude, longitude).execute();
+        new VisoRandoApiCaller(this.getActivity(), latitude, longitude).execute();
     }
 }

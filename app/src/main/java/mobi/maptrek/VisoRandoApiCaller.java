@@ -1,26 +1,34 @@
 package mobi.maptrek;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import mobi.maptrek.data.source.FileDataSource;
 import mobi.maptrek.data.visorando.VisoRandoJson;
+import mobi.maptrek.io.GPXManager;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class VisoRandoApiCaller extends AsyncTask<String, Void, String> {
-
+    private Context context;
     private Exception exception;
     private double latitude;
     private double longitude;
+    private int hikeId;
 
-    public VisoRandoApiCaller(double latitude, double longitude){
+    public VisoRandoApiCaller(Context context, double latitude, double longitude){
+        this.context = context;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.hikeId = 0;
     }
 
     protected String doInBackground(String... urls) {
@@ -52,9 +60,11 @@ public class VisoRandoApiCaller extends AsyncTask<String, Void, String> {
                 Gson g = new Gson();
                 VisoRandoJson visoRandoJson = g.fromJson(searchResult, VisoRandoJson.class);
                 if (visoRandoJson.geojson.features.size() > 0) {
-                    int id = visoRandoJson.geojson.features.get(0).properties.id;
+                    hikeId = visoRandoJson.geojson.features.get(0).properties.id;
 
-                    String visoRandoUrl = String.format("https://www.visorando.com/en/index.php?component=user&task=redirectToContent&from=gpxRando&idRandonnee=%d", id);
+                    String visoRandoUrl = String.format(
+                            "https://www.visorando.com/en/index.php?component=user&task=redirectToContent&from=gpxRando&idRandonnee=%d",
+                            hikeId);
 
                     Request request = new Request.Builder()
                             .url(visoRandoUrl)
@@ -91,5 +101,13 @@ public class VisoRandoApiCaller extends AsyncTask<String, Void, String> {
 
     protected void onPostExecute(String response) {
         Log.d("POST EXECUTE VISORANDO",response);
+        GPXManager gpxManager = new GPXManager();
+        InputStream targetStream = new ByteArrayInputStream(response.getBytes());
+        try {
+            FileDataSource fileDataSource = gpxManager.loadData(targetStream, String.valueOf(hikeId));
+            ((MainActivity) context).addSourceToMap(fileDataSource);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
