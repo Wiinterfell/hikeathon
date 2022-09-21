@@ -18,6 +18,7 @@ package mobi.maptrek.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,24 +27,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.graphhopper.ResponsePath;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
-import mobi.maptrek.MapTrek;
 import mobi.maptrek.R;
-import mobi.maptrek.maps.MapIndex;
 import mobi.maptrek.maps.routing.Router;
 
 public class CreateRoute extends Fragment {
     private static String OSM_FILE_NAME = "bretagne.pbf";
     private Router mRouter;
-    private MapIndex mMapIndex;
 
     public CreateRoute() {
         super(R.layout.fragment_create_route);
-        this.mMapIndex = MapTrek.getApplication().getExtraMapIndex();
         this.mRouter = new Router();
     }
 
@@ -51,7 +51,12 @@ public class CreateRoute extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         view.findViewById(R.id.compute_route).setOnClickListener(v -> {
             try {
-                mRouter.compute(getFileFromAssets(getContext(), OSM_FILE_NAME));
+                double fromLat = 47.74064;
+                double fromLon = -3.38867;
+                double toLat = 47.74529;
+                double toLon = -3.35381;
+                ResponsePath route = mRouter.compute(getFileFromAssets(getContext(), OSM_FILE_NAME), fromLat, fromLon, toLat, toLon);
+                Log.d("Router", "Route distance: " + route.getDistance() + ", time: " + route.getTime());
             } catch (IOException e) {
                 Toast.makeText(getContext(), "Could not load map file.", Toast.LENGTH_LONG);
                 e.printStackTrace();
@@ -61,7 +66,7 @@ public class CreateRoute extends Fragment {
 
     private String getFileFromAssets(Context context, String fileName) throws IOException {
         Path outFileName = Paths.get(context.getCacheDir().getAbsolutePath(), fileName);
-        Files.copy(getResources().getAssets().open(OSM_FILE_NAME), outFileName);
+        Files.copy(getResources().getAssets().open(OSM_FILE_NAME), outFileName, StandardCopyOption.REPLACE_EXISTING);
         return outFileName.toAbsolutePath().toString();
     }
 }
