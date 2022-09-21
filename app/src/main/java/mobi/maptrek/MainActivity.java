@@ -4141,7 +4141,7 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
         }
     }
 
-    private void addSourceToMap(FileDataSource source) {
+    public void addSourceToMap(FileDataSource source) {
         for (Waypoint waypoint : source.waypoints) {
             addWaypointMarker(waypoint);
             mTotalDataItems++;
