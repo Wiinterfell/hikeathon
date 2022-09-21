@@ -766,7 +766,7 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
             return true;
         });
         mViews.mapDownloadButton.setOnClickListener(v -> onMapDownloadClicked());
-
+        mViews.addItineraryButton.setOnClickListener(v -> onAddItineraryClicked());
         // Resume state
         int state = Configuration.getLocationState();
         if (state >= LocationState.NORTH.ordinal())
@@ -1789,7 +1789,7 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
     }
 
     private void onItineraryClicked() {
-        TransitionManager.beginDelayedTransition(mViews.coordinatorLayout, new Fade());
+        // TransitionManager.beginDelayedTransition(mViews.coordinatorLayout, new Fade());
         if (mViews.addItineraryButton.getVisibility() == View.VISIBLE) {
             mViews.addItineraryButton.setVisibility(View.GONE);
         } else {
@@ -1799,9 +1799,16 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
         FragmentFactory factory = mFragmentManager.getFragmentFactory();
         ItineraryFragment fragment = (ItineraryFragment) factory.instantiate(getClassLoader(), ItineraryFragment.class.getName());
         showExtendPanel(PANEL_STATE.ITINERARY, "itinerary", fragment);
-        /*FragmentFactory factory = mFragmentManager.getFragmentFactory();
-            CreateRoute fragment = (CreateRoute) factory.instantiate(getClassLoader(), CreateRoute.class.getName());
-            showExtendPanel(PANEL_STATE.ITINERARY, "createItinerary", fragment);*/
+    }
+
+    private void onAddItineraryClicked() {
+        // hide button
+        if (mViews.addItineraryButton.getVisibility() == View.VISIBLE) {
+            mViews.addItineraryButton.setVisibility(View.GONE);
+        }
+        FragmentFactory factory = mFragmentManager.getFragmentFactory();
+        CreateRoute fragment = (CreateRoute) factory.instantiate(getClassLoader(), CreateRoute.class.getName());
+        showExtendPanel(PANEL_STATE.ITINERARY, "createItinerary", fragment);
     }
 
     private void onMapsClicked() {
