@@ -6,8 +6,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.io.InputStream;
 
 import mobi.maptrek.data.source.FileDataSource;
@@ -83,6 +86,15 @@ public class VisoRandoApiCaller extends AsyncTask<String, Void, String> {
                             .build();
                     Response responseGpx = client.newCall(requestGpx).execute();
                     String gpx = responseGpx.body().string();
+
+                    File dir = MapTrek.getApplication().getExternalDir("data");
+                    File mytempFile = new File(dir, hikeId+".gpx");
+                    try {
+                        Files.write(mytempFile.toPath(),  gpx.getBytes(StandardCharsets.UTF_8));
+                    } catch (IOException ex) {
+                        // Handle exception
+                    }
+
                     return gpx;
                 } else {
                     Log.d("VISORANDO: nothing found", String.valueOf(visoRandoJson.geojson.features.size()));
@@ -101,13 +113,5 @@ public class VisoRandoApiCaller extends AsyncTask<String, Void, String> {
 
     protected void onPostExecute(String response) {
         Log.d("POST EXECUTE VISORANDO",response);
-        GPXManager gpxManager = new GPXManager();
-        InputStream targetStream = new ByteArrayInputStream(response.getBytes());
-        try {
-            FileDataSource fileDataSource = gpxManager.loadData(targetStream, String.valueOf(hikeId));
-            ((MainActivity) context).addSourceToMap(fileDataSource);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
