@@ -400,6 +400,7 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
     private boolean mObjectInteractionEnabled = true;
     private ShieldFactory mShieldFactory;
     private OsmcSymbolFactory mOsmcSymbolFactory;
+    private FileDataSource mCustomRouteDataSource;
 
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
@@ -4158,8 +4159,12 @@ public class MainActivity extends BasePluginActivity implements ILocationListene
     }
 
     public void showRoute(FileDataSource source) {
+        if (mCustomRouteDataSource != null) {
+            setDataSourceAvailability(mCustomRouteDataSource, false);
+        }
+
         this.addSourceToMap(source);
-        source.setVisible(true);
+        mCustomRouteDataSource = source;
     }
 
     private void removeSourceFromMap(FileDataSource source) {

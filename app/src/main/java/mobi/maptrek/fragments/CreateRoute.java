@@ -55,6 +55,7 @@ import mobi.maptrek.util.StringFormatter;
 
 public class CreateRoute extends Fragment implements Map.UpdateListener {
     private static String OSM_FILE_NAME = "bretagne.pbf";
+    private static String GH_CONFIG_FILE = "config.yml";
     private Router mRouter;
     private MapHolder mMapHolder;
     TextInputEditText mFromField;
@@ -88,6 +89,8 @@ public class CreateRoute extends Fragment implements Map.UpdateListener {
             }
 
             try {
+                // First load profiles in cache folder for GraphHopper
+                getFileFromAssets(getContext(), GH_CONFIG_FILE);
                 ResponsePath route = mRouter.compute(getFileFromAssets(getContext(), OSM_FILE_NAME), fromLat, fromLon, toLat, toLon);
                 Log.d("Router", "Route distance: " + route.getDistance() + ", time: " + route.getTime());
                 ((MainActivity) getActivity()).showRoute(routeResponseToFileDataSource(route));
